@@ -66,7 +66,7 @@ public class NativeHttpPlugin : FlutterPlugin, MethodCallHandler {
         }
         
         val mHandler = Handler(Looper.getMainLooper())
-        client.newCall(request).enqueue(
+        client.newCall(builder.build()).enqueue(
                 object : Callback {
 
                     override fun onFailure(call: Call, e: IOException) {
