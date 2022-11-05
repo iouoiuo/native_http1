@@ -53,21 +53,23 @@ public class NativeHttpPlugin : FlutterPlugin, MethodCallHandler {
     val JSON: MediaType = "application/x-www-form-urlencoded; charset=utf-8".toMediaType()
 
     fun sendRequest(url: String, method: String, headers: HashMap<String, String>, body: HashMap<String, String>, @NonNull result: Result) {
-        
+
         val mediaType = JSON
-        val body = RequestBody.create(mediaType, body.toString())
+        val form = FormBody.Builder()
+        body.forEach { form.add(it.key, it.value) }
+//        val body = RequestBody.create(mediaType, form)
         val builder = Request.Builder()
-            .url(url)
-            .post(body)
-            .addHeader("content-type", "application/x-www-form-urlencoded")
-    
+                .url(url)
+                .post(form.build())
+                .addHeader("content-type", "application/x-www-form-urlencoded")
+
         val mHandler = Handler(Looper.getMainLooper())
         client.newCall(builder.build()).enqueue(
                 object : Callback {
 
                     override fun onFailure(call: Call, e: IOException) {
                         mHandler.post {
-                            result.error(e.message?:"", e.localizedMessage?:"", null)
+                            result.error(e.message ?: "", e.localizedMessage ?: "", null)
                         }
                     }
 
@@ -87,25 +89,5 @@ public class NativeHttpPlugin : FlutterPlugin, MethodCallHandler {
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
     }
 }
-  class Param : HashMap<String, Any>() {
 
-        override fun toString(): String {
-            val builder = StringBuilder()
-            if (containsKey("key")) {
-                remove("key")
-            }
-            for ((key, value) in this) {
-                builder.append(key).append("=").append(urlEncode(value)).append("&")
-            }
-            if (builder.isNotEmpty()) {
-                builder.deleteCharAt(builder.length - 1)
-            }
-            return builder.toString()
-        }
 
-        fun urlEncode(str: Any?): String {
-            return if (str == null) {
-                ""
-            } else URLEncoder.encode(str.toString())
-        }
-    }
