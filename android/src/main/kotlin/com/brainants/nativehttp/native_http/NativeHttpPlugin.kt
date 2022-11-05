@@ -14,7 +14,8 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import java.io.IOException
-
+import java.net.URLEncoder
+import java.util.HashMap
 
 /** NativeHttpPlugin */
 public class NativeHttpPlugin : FlutterPlugin, MethodCallHandler {
