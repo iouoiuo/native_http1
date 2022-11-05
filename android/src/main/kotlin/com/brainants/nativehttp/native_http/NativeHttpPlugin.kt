@@ -53,21 +53,18 @@ public class NativeHttpPlugin : FlutterPlugin, MethodCallHandler {
     val JSON: MediaType = "application/x-www-form-urlencoded; charset=utf-8".toMediaType()
 
     fun sendRequest(url: String, method: String, headers: HashMap<String, String>, body: HashMap<String, String>, @NonNull result: Result) {
-//         val requestBody: RequestBody = JSONObject(body).toString().toRequestBody(JSON)
         
+        val client = OkhttpUtils.client
         val mediaType = MediaType.parse("application/x-www-form-urlencoded")
-        val requestBody: RequestBody = RequestBody.create(mediaType, body.toString())
-        
-        var requestBuilder: Request.Builder = Request.Builder()
-                .url(url)
-        headers.entries.forEach {
-            requestBuilder = requestBuilder.addHeader(it.key, it.value as String)
+        val body = RequestBody.create(mediaType, param.toString())
+        val builder = Request.Builder()
+            .url(url)
+            .post(body)
+            .addHeader("content-type", "application/x-www-form-urlencoded")
+        if (headers != null) {
+            builder.headers(headers)
         }
-
-        if (method != "GET")
-            requestBuilder = requestBuilder.method(method, requestBody)
-
-        val request = requestBuilder.build()
+        
         val mHandler = Handler(Looper.getMainLooper())
         client.newCall(request).enqueue(
                 object : Callback {
