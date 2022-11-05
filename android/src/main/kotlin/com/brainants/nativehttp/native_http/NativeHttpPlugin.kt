@@ -54,7 +54,7 @@ public class NativeHttpPlugin : FlutterPlugin, MethodCallHandler {
 
     fun sendRequest(url: String, method: String, headers: HashMap<String, String>, body: HashMap<String, String>, @NonNull result: Result) {
         
-        val mediaType = "application/x-www-form-urlencoded".toMediaTypeOrNull()
+        val mediaType = JSON
         val body = RequestBody.create(mediaType, body.toString())
         val builder = Request.Builder()
             .url(url)
