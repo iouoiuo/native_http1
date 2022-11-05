@@ -69,7 +69,7 @@ public class NativeHttpPlugin : FlutterPlugin, MethodCallHandler {
 
                     override fun onFailure(call: Call, e: IOException) {
                         mHandler.post {
-                            result.error(e.message, e.localizedMessage, null)
+                            result.error(e.message?:"", e.localizedMessage?:"", null)
                         }
                     }
 
