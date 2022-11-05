@@ -39,8 +39,8 @@ public class NativeHttpPlugin : FlutterPlugin, MethodCallHandler {
         if (call.method == "native_http/request") {
             val url = call.argument<String>("url")!!
             val method = call.argument<String>("method")!!
-            var headers = call.argument<HashMap<String, Any>>("headers")
-            var body = call.argument<HashMap<String, Any>>("body")
+            var headers = call.argument<HashMap<String, String>>("headers")
+            var body = call.argument<HashMap<String, String>>("body")
             if (headers == null) headers = HashMap()
             if (body == null) body = HashMap()
             sendRequest(url, method, headers, body, result)
@@ -51,7 +51,7 @@ public class NativeHttpPlugin : FlutterPlugin, MethodCallHandler {
 
     val JSON: MediaType = "application/json; charset=utf-8".toMediaType()
 
-    fun sendRequest(url: String, method: String, headers: HashMap<String, Any>, body: HashMap<String, Any>, @NonNull result: Result) {
+    fun sendRequest(url: String, method: String, headers: HashMap<String, String>, body: HashMap<String, String>, @NonNull result: Result) {
         val requestBody: RequestBody = JSONObject(body).toString().toRequestBody(JSON)
         var requestBuilder: Request.Builder = Request.Builder()
                 .url(url)
