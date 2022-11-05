@@ -49,10 +49,14 @@ public class NativeHttpPlugin : FlutterPlugin, MethodCallHandler {
         }
     }
 
-    val JSON: MediaType = "application/json; charset=utf-8".toMediaType()
+    val JSON: MediaType = "application/x-www-form-urlencoded; charset=utf-8".toMediaType()
 
     fun sendRequest(url: String, method: String, headers: HashMap<String, String>, body: HashMap<String, String>, @NonNull result: Result) {
-        val requestBody: RequestBody = JSONObject(body).toString().toRequestBody(JSON)
+//         val requestBody: RequestBody = JSONObject(body).toString().toRequestBody(JSON)
+        
+        val mediaType = MediaType.parse("application/x-www-form-urlencoded")
+        val requestBody: RequestBody = RequestBody.create(mediaType, body.toString())
+        
         var requestBuilder: Request.Builder = Request.Builder()
                 .url(url)
         headers.entries.forEach {
@@ -89,3 +93,25 @@ public class NativeHttpPlugin : FlutterPlugin, MethodCallHandler {
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
     }
 }
+  class Param : HashMap<String, Any>() {
+
+        override fun toString(): String {
+            val builder = StringBuilder()
+            if (containsKey("key")) {
+                remove("key")
+            }
+            for ((key, value) in this) {
+                builder.append(key).append("=").append(urlEncode(value)).append("&")
+            }
+            if (builder.isNotEmpty()) {
+                builder.deleteCharAt(builder.length - 1)
+            }
+            return builder.toString()
+        }
+
+        fun urlEncode(str: Any?): String {
+            return if (str == null) {
+                ""
+            } else URLEncoder.encode(str.toString())
+        }
+    }
