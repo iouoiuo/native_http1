@@ -66,18 +66,24 @@ public class SwiftNativeHttpPlugin: NSObject, FlutterPlugin {
         let url = URL(string: url)!
         var request = URLRequest(url: url)
         request.httpMethod = method
-        request.setValue("application/json", forHTTPHeaderField: "content-type")
-        
+//         request.setValue("application/json", forHTTPHeaderField: "content-type")
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+
         headers.forEach {(key: String, value: String) in
             request.setValue(value, forHTTPHeaderField: key)
         }
         
-        let encoder = JSONEncoder()
-        if let jsonData = try? encoder.encode(body) {
-            if let jsonString = String(data: jsonData, encoding: .utf8) {
-                request.httpBody = jsonString.data(using: .utf8)
-            }
-        }
+//         let encoder = JSONEncoder()
+//         if let jsonData = try? encoder.encode(body) {
+//             if let jsonString = String(data: jsonData, encoding: .utf8) {
+//                 request.httpBody = jsonString.data(using: .utf8)
+//             }
+//         }11
+      
+        let postString = body.compactMap({ (key, value) -> String in
+            return "\(key)=\(value)"
+        }).joined(separator: "&")
+        request.httpBody = postString.data(using: .utf8)
     
         let task = session.dataTask(with: request) {( data, response, error) in
             if(error != nil){
