@@ -54,17 +54,13 @@ public class NativeHttpPlugin : FlutterPlugin, MethodCallHandler {
 
     fun sendRequest(url: String, method: String, headers: HashMap<String, String>, body: HashMap<String, String>, @NonNull result: Result) {
         
-        val client = OkhttpUtils.client
-        val mediaType = MediaType.parse("application/x-www-form-urlencoded")
-        val body = RequestBody.create(mediaType, param.toString())
+        val mediaType = "application/x-www-form-urlencoded".toMediaTypeOrNull()
+        val body = RequestBody.create(mediaType, body.toString())
         val builder = Request.Builder()
             .url(url)
             .post(body)
             .addHeader("content-type", "application/x-www-form-urlencoded")
-        if (headers != null) {
-            builder.headers(headers)
-        }
-        
+    
         val mHandler = Handler(Looper.getMainLooper())
         client.newCall(builder.build()).enqueue(
                 object : Callback {
